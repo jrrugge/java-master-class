@@ -246,22 +246,22 @@ git push -u origin main
 git checkout -b initial-implementation
 ```
 
-2. Create a package with your name and move `Main.java` inside it:
+2. Create a package with your name and move `com.johnscode.Main.java` inside it:
 
 ```
-src/com/<yourname>/Main.java
+src/com/<yourname>/com.johnscode.Main.java
 ```
 
-For example, if your name is Franco: `src/com/franco/Main.java`
+For example, if your name is Franco: `src/com/franco/com.johnscode.Main.java`
 
-The starter `Main.java` contains TODOs to guide the first steps:
+The starter `com.johnscode.Main.java` contains TODOs to guide the first steps:
 
 ```java
 // TODO 1. create a new branch called initial-implementation
 // TODO 2. create a package with your name. i.e com.franco and move this file inside the new package
 // TODO 3. implement https://amigoscode.com/learn/java-cli-build/lectures/3a83ecf3-e837-4ae5-85a8-f8ae3f60f7f5
 
-public class Main {
+public class com.johnscode.Main {
 
     public static void main(String[] args) {
         System.out.println("Java Master Class");
@@ -274,7 +274,7 @@ After moving, update the package declaration:
 ```java
 package com.franco;
 
-public class Main {
+public class com.johnscode.Main {
 
     public static void main(String[] args) {
         System.out.println("Java Master Class");
@@ -301,7 +301,7 @@ Build the complete CLI application from scratch.
 ```mermaid
 graph TB
     subgraph Presentation
-        M[Main.java<br>CLI Menu Loop]
+        M[com.johnscode.Main.java<br>CLI Menu Loop]
     end
 
     subgraph Service Layer
@@ -344,7 +344,7 @@ graph TB
 src/
 └── com/
     └── amigoscode/
-        ├── Main.java
+        ├── com.johnscode.Main.java
         ├── car/
         │   ├── Brand.java
         │   ├── Car.java
@@ -364,7 +364,7 @@ src/
 - Create POJO classes: `User`, `Car`, `CarBooking`, `Brand` enum
 - Create DAO classes: `UserDao`, `CarDao`, `CarBookingDao`
 - Create service classes for business logic
-- Implement the CLI menu loop in `Main.java`
+- Implement the CLI menu loop in `com.johnscode.Main.java`
 - Seed static data for users and cars
 - Implement all 8 menu options
 
@@ -437,7 +437,7 @@ Refactor the data access layer to use interfaces and apply dependency injection 
 ```mermaid
 graph TB
     subgraph Presentation
-        M[Main.java<br>CLI Menu Loop]
+        M[com.johnscode.Main.java<br>CLI Menu Loop]
     end
 
     subgraph Service Layer
@@ -480,7 +480,7 @@ graph TB
 src/
 └── com/
     └── amigoscode/
-        ├── Main.java
+        ├── com.johnscode.Main.java
         ├── car/
         │   ├── Brand.java
         │   ├── Car.java
@@ -618,7 +618,7 @@ public class CarBookingService {
 }
 ```
 
-**Wiring in Main.java** — the student can now swap between array and file implementations for bookings:
+**Wiring in com.johnscode.Main.java** — the student can now swap between array and file implementations for bookings:
 
 ```java
 public static void main(String[] args) {
@@ -779,7 +779,7 @@ src/
 │   ├── java/
 │   │   └── com/
 │   │       └── amigoscode/
-│   │           ├── Main.java
+│   │           ├── com.johnscode.Main.java
 │   │           ├── car/
 │   │           │   ├── Brand.java
 │   │           │   ├── Car.java
@@ -883,7 +883,7 @@ public class UserFakerDataAccessService implements UserDao {
 }
 ```
 
-These can be swapped in via dependency injection in `Main.java`:
+These can be swapped in via dependency injection in `com.johnscode.Main.java`:
 
 ```java
 UserDao userDao = new UserFakerDataAccessService();
@@ -1407,7 +1407,7 @@ CommandLineRunner commandLineRunner(AppUserRepository appUserRepository,
 }
 ```
 
-Place this bean in the `Main` class (annotated with `@SpringBootApplication`). The data is inserted into H2 on every startup since the database is in-memory.
+Place this bean in the `com.johnscode.Main` class (annotated with `@SpringBootApplication`). The data is inserted into H2 on every startup since the database is in-memory.
 
 #### Step 9 - Unit Tests
 
@@ -1429,7 +1429,7 @@ src/
 │   ├── java/
 │   │   └── com/
 │   │       └── <yourname>/
-│   │           ├── Main.java                       (@SpringBootApplication)
+│   │           ├── com.johnscode.Main.java                       (@SpringBootApplication)
 │   │           ├── car/
 │   │           │   ├── Brand.java
 │   │           │   ├── Car.java                    (@Entity)
