@@ -2,7 +2,9 @@ package com.johnscode.booking;
 
 import com.johnscode.car.Car;
 import com.johnscode.user.User;
+
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,16 +19,14 @@ public class CarBooking {
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final BigDecimal price;
-    private final BookingStatus status;
+    private BookingStatus status;
     private final LocalDateTime bookedAt;
 
 
-
-
 //Adding the constructor : creates and initialises the new carbooking object.
-//Note the order of the argument matters when the contructor is called.
+//Note the order of the argument matters when the constructor is called.
 
-    public CarBooking (UUID id, User user, Car car, LocalDate startDate, LocalDate endDate, BigDecimal price, BookingStatus status, LocalDateTime bookedAt) {
+    public CarBooking(UUID id, User user, Car car, LocalDate startDate, LocalDate endDate, BigDecimal price, BookingStatus status, LocalDateTime bookedAt) {
 
         //store each supplied value inside this booking object
         this.id = id;
@@ -39,7 +39,7 @@ public class CarBooking {
         this.bookedAt = bookedAt;
     }
 
-//Getters, returns value of each attribute provided
+    //Getters, returns value of each attribute provided
 //Each getters return type matches its field
     public UUID getId() {
         return id;
@@ -69,8 +69,29 @@ public class CarBooking {
         return status;
     }
 
+    // Allows the booking status to change, for example when cancelling a booking.
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
+
     public LocalDateTime getBookedAt() {
         return bookedAt;
     }
 
+    // Compare bookings by ID only, because the ID uniquely identifies each booking.
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof CarBooking carBooking)) {
+            return false;
+        }
+        return Objects.equals(id, carBooking.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

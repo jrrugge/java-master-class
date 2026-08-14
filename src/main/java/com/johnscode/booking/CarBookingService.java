@@ -1,9 +1,9 @@
 package com.johnscode.booking;
 
 import com.johnscode.car.Car;
-import com.johnscode.car.CarDao;
+import com.johnscode.car.CarService;
 import com.johnscode.user.User;
-import com.johnscode.user.UserDao;
+import com.johnscode.user.UserService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,23 +11,16 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+
 //CarBookingService contains the business logic for making bookings.
 
 public class CarBookingService {
 
-
-     //UserDao provides access to the seeded users.
-
-    private final UserDao userDao;
-
-
-     //CarDao provides access to the seeded cars.
-
-    private final CarDao carDao;
-
-
-    //CarBookingDao stores, retrieves and deletes bookings.
-
+    //UserService provides user-related operations
+    private final UserService userService;
+    //CarService provides car-related operations
+    private final CarService carService;
+    //CarBookingDao stores, retrieves and updates bookings
     private final CarBookingDao carBookingDao;
 
 
@@ -36,8 +29,8 @@ public class CarBookingService {
     //This runs whenever we create a new CarBookingService:
 
     public CarBookingService() {
-        this.userDao = new UserDao();
-        this.carDao = new CarDao();
+        this.userService = new UserService();
+        this.carService = new CarService();
         this.carBookingDao = new CarBookingDao();
     }
 
@@ -62,7 +55,7 @@ public class CarBookingService {
         }
 
 
-         //Validate that a car ID was supplied.
+        //Validate that a car ID was supplied.
 
         if (carId == null) {
             throw new IllegalArgumentException(
@@ -71,7 +64,7 @@ public class CarBookingService {
         }
 
 
-         //Validate that both booking dates were supplied.
+        //Validate that both booking dates were supplied.
 
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException(
@@ -80,11 +73,11 @@ public class CarBookingService {
         }
 
 
-         //Ask UserDao to find the user with the supplied UUID.
+        //Ask UserService to find the user with the supplied UUID.
 
-         //UserDao returns null when no matching user exists.
+        //UserService returns null when no matching user exists.
 
-        User user = userDao.getUserById(userId);
+        User user = userService.getUSerById(userId);
 
         if (user == null) {
             throw new IllegalArgumentException(
@@ -93,11 +86,11 @@ public class CarBookingService {
         }
 
 
-         //Ask CarDao to find the car with the supplied UUID.
+        //Ask CarService to find the car with the supplied UUID.
 
-         //CarDao returns null when no matching car exists.
+        //CarServic returns null when no matching car exists.
 
-        Car car = carDao.getCarById(carId);
+        Car car = carService.getCarById(carId);
 
         if (car == null) {
             throw new IllegalArgumentException(
@@ -106,7 +99,7 @@ public class CarBookingService {
         }
 
 
-         //The booking may begin today or in the future.
+        //The booking may begin today or in the future.
 
 
         if (startDate.isBefore(LocalDate.now())) {
@@ -125,10 +118,10 @@ public class CarBookingService {
         }
 
 
-         //Check whether the selected car already has
-         //an active booking and rejects if true.
+        //Check whether the selected car already has
+        //an active booking and rejects if true.
 
-        if (isCarBooked(carId)) {
+        if (isCarBooked(carId, startDate, endDate)) {
             throw new IllegalStateException(
                     "The car is already booked and is not available"
             );
@@ -142,13 +135,12 @@ public class CarBookingService {
                 endDate
         );
 
+        //Calculate the total booking price:
 
-         //Calculate the total booking price:
+        //rental price per day × number of rental days
 
-         //rental price per day × number of rental days
-
-         //BigDecimal.valueOf converts the number of days
-         //into a BigDecimal before multiplication
+        //BigDecimal.valueOf converts the number of days
+        //into a BigDecimal before multiplication
 
 
         BigDecimal totalPrice = car
@@ -174,75 +166,62 @@ public class CarBookingService {
                 BookingStatus.ACTIVE,
                 LocalDateTime.now()
         );
-
-
-         //Ask CarBookingDao to store the new booking.
+        //Ask CarBookingDao to store the new booking.
 
         carBookingDao.saveBooking(newBooking);
 
-         //Return the created booking to the caller.
+        //Return the created booking to the caller.
 
-         //Main.java can later display its details.
+        //Main.java can later display its details.
 
         return newBooking;
     }
+    //Checks whether an active booking already exists
+    //for the supplied car ID.
 
-     //Checks whether an active booking already exists
-     //for the supplied car ID.
+    //The method is private because it is only used
+    //internally by CarBookingService.
 
-     //The method is private because it is only used
-     //internally by CarBookingService.
-
-    private boolean isCarBooked(UUID carId) {
-
-
+    private boolean isCarBooked(UUID carId, LocalDate startDate, LocalDate endDate) {
         //Retrieve every booking currently stored.
 
-        CarBooking[] bookings =
-                carBookingDao.getAllBookings();
+        CarBooking[] bookings = carBookingDao.getAllBookings();
 
-
-         //Examine each booking in the array.
+        //Examine each booking in the array.
 
         for (int i = 0; i < bookings.length; i++) {
-
-
             //Retrieve the booking at the current position.
-
             CarBooking currentBooking = bookings[i];
 
-
-             //Check whether the current booking contains
-             //the same car that we are trying to book.
+            //Check whether the current booking contains
+            //the same car that we are trying to book.
 
             boolean sameCar = currentBooking
                     .getCar()
                     .getId()
                     .equals(carId);
-
-
             //Check if existing booking is active.
+            boolean activeBooking = currentBooking.getStatus() == BookingStatus.ACTIVE;
+            //overlap comparison
+            boolean overlappingDates = currentBooking
+                    .getStartDate()
+                    .isBefore(endDate)
+                    && startDate.isBefore(currentBooking.getEndDate());
+            //The car is unavailable when it is the same car
+            //AND
+            //he existing booking is active
 
-            boolean activeBooking =
-                    currentBooking.getStatus()
-                            == BookingStatus.ACTIVE;
-
-
-             //The car is unavailable when it is the same car
-             //AND
-             //he existing booking is active
-
-            if (sameCar && activeBooking) {
+            if (sameCar && activeBooking && overlappingDates) {
                 return true;
             }
         }
 
 
-         //No active booking was found for this car
+        //No active booking was found for this car
         return false;
     }
 
-    //Returns every booking currently stored.
+//Returns every booking currently stored.
 
     public CarBooking[] getAllBookings() {
 
@@ -253,7 +232,7 @@ public class CarBookingService {
     }
 
     //Exposing userBookings through CarBookingService
-    //Returns all bookings belonging to one user
+//Returns all bookings belonging to one user
     public CarBooking[] getBookingsByUserId(UUID userId) {
         //Validate that a user ID was supplied
         if (userId == null) {
@@ -261,7 +240,7 @@ public class CarBookingService {
         }
 
         //confirm that the selected user actually exists
-        User user = userDao.getUserById(userId);
+        User user = userService.getUSerById(userId);
 
         if (user == null) {
             throw new IllegalArgumentException(("No user was found with ID: ") + userId);
@@ -271,40 +250,38 @@ public class CarBookingService {
     }
 
     //Add getAvailableCars Method
-     public Car[] getAvailableCars() {
-        //should return all cars that dont have an active booking
-    //Retrieve all cars from carDao
-         Car[] allCars = carDao.getAllCars();
-         //arrays have a fixed size we must count how many are currently available
+    public Car[] getAvailableCars() {
+        //Return all cars that do not have an active booking overlapping today
+        Car[] allCars = carService.getAllCars();
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
 
-         int availableCarCount = 0;
-         //Loop 1 - count every car that does not have an active booking
-         for (int i = 0; i < allCars.length; i++) {
+        int availableCarCount = 0;
+        //Loop 1 - count every car not booked today
+        for (int i = 0; i < allCars.length; i++) {
+            Car currentCar = allCars[i];
+            if (!isCarBooked(currentCar.getId(), today, tomorrow)) {
+                availableCarCount++;
+            }
+        }
+        //Create Array with exactly enough space for the available cars
+        Car[] availableCars = new Car[availableCarCount];
 
-             Car currentCar = allCars[i];
-             //isCarBooked - return true or false - if the car is not booked count it as available and add to the availableCars array to return to the application
-             if(!isCarBooked(currentCar.getId())) {
-                 availableCarCount++;
-             }
-         }
-         //Create Array with exactly enough space for the available cars
-         Car[] availableCars = new Car[availableCarCount];
+        //Tracks the next empty position in availableCars
+        int availableCarIndex = 0;
 
-         //Tracks the next empty position in availableCars
-         int availableCarIndex = 0;
+        //Second Loop - Copy each available car into the new array
+        for (int i = 0; i < allCars.length; i++) {
+            Car currentCar = allCars[i];
 
-         //Second Loop - Copy each available car into the new array
-         for (int i = 0; i < allCars.length; i++) {
-             Car currentCar = allCars[i];
+            if (!isCarBooked(currentCar.getId(), today, tomorrow)) {
+                availableCars[availableCarIndex] = currentCar;
 
-             if(!isCarBooked(currentCar.getId())) {
-                 availableCars[availableCarIndex] = currentCar;
-
-                 availableCarIndex++;
-             }
-         }
-         //Return the array containing only available cars
-         return availableCars;
+                availableCarIndex++;
+            }
+        }
+        //Return the array containing only available cars
+        return availableCars;
     }
 
     //Add a method that return availabe electric cars
@@ -328,10 +305,10 @@ public class CarBookingService {
         int electricCarIndex = 0; //Tracks the next empty position in the new array
 
         //Copy the electric cars into the new array
-        for(int i = 0; i < availableCars.length; i++) {
+        for (int i = 0; i < availableCars.length; i++) {
             Car currentCar = availableCars[i];
 
-            if(currentCar .isElectric()) {
+            if (currentCar.isElectric()) {
                 availableElectricCars[electricCarIndex] = currentCar;
                 electricCarIndex++;
             }
@@ -355,6 +332,6 @@ public class CarBookingService {
         return carBookingDao.deleteBookingById(bookingId);
     }
 
-    //after adding helped methods for option 4 then update CarBookingDao
-    //returns every booking currently stored
+//after adding helped methods for option 4 then update CarBookingDao
+//returns every booking currently stored
 }

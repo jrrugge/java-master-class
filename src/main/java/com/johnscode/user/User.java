@@ -1,13 +1,14 @@
 package com.johnscode.user;
 
 //java class/util used to create unique id's.
+
 import java.util.UUID;
 
 //This class represents a user in the car booking system
 
 public class User {
 
-//defines the information every user contains, two people can have the same name but not the same UUID
+    //defines the information every user contains, two people can have the same name but not the same UUID
     private final UUID id;
     private final String name;
 
@@ -18,7 +19,7 @@ public class User {
         this.name = name;
     }
 
-    //getter returning the users unique id, code outside this class retrieves data via the getter as it is set to private in this class.
+    //getter returning the users unique id
     public UUID getId() {
         return id;
     }

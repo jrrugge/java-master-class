@@ -29,12 +29,9 @@ public class CarBookingDao {
             CarBooking currentBooking = bookings[i];
 
             //Get the user stored inside the booking, then compare that users iD with userID
-            boolean sameUser = currentBooking
-                    .getUser()
-                    .getId()
-                    .equals(userId);
+            boolean sameUser = currentBooking.getUser().getId().equals(userId);
 
-            if(sameUser) {
+            if (sameUser) {
                 matchingBookingCount++;
             }
         }
@@ -47,10 +44,7 @@ public class CarBookingDao {
 
         for (int i = 0; i < bookings.length; i++) {
             CarBooking currentBooking = bookings[i];
-            boolean sameUser = currentBooking
-                    .getUser()
-                    .getId()
-                    .equals(userId);
+            boolean sameUser = currentBooking.getUser().getId().equals(userId);
 
             if (sameUser) {
                 userBookings[userBookingIndex] = currentBooking;
@@ -73,45 +67,23 @@ public class CarBookingDao {
             updatedBookings[i] = bookings[i];
         }
         //Store the new booking in the final position
-        updatedBookings[updatedBookings.length -1] = booking;
+        updatedBookings[updatedBookings.length - 1] = booking;
 
         //Replace the old array with the expanded array
         bookings = updatedBookings;
     }
-    //Delete a booking using its UUID
-    public boolean deleteBookingById(UUID bookingId) {
-        //first find the position of the booking you want to delete
-        //-1 means that no matching booking has been found yet
 
-        int bookingIndex = -1;
-        for(int i = 0; i < bookings.length; i++) {
+    //Soft delete a booking by setting its status to CANCELLED.
+    public boolean deleteBookingById(UUID bookingId) {
+        for (int i = 0; i < bookings.length; i++) {
             CarBooking currentBooking = bookings[i];
 
             if (currentBooking.getId().equals(bookingId)) {
-                bookingIndex = i;
-                break;
+                currentBooking.setStatus(BookingStatus.CANCELLED);
+                return true;
             }
         }
-        //No match was found
-        if(bookingIndex == -1) {
-            return false;
-        }
-        //Create an array with 1 fewer position
-        CarBooking[] updatedBookings = new CarBooking[bookings.length -1];
-
-        //index tracks where to insert the new array
-        int newIndex = 0;
-
-        //Copy every booking except the one being deleted
-        for (int i = 0; i < bookings.length; i++) {
-            if(i != bookingIndex) {
-                updatedBookings[newIndex] = bookings[i];
-                newIndex++;
-            }
-        }
-        //Replace the original array
-        bookings = updatedBookings;
-        return true;
+        //No booking matched the supplier booking ID
+        return false;
     }
-
 }

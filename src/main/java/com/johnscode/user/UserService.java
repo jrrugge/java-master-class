@@ -1,6 +1,7 @@
 package com.johnscode.user;
 
 import java.util.UUID;
+
 import com.johnscode.user.UserDao;
 
 
@@ -14,7 +15,7 @@ public class UserService {
 
     //UserService functionality: Return all users, find a user by uuid and validate that te supplied uuid is not null
     //The service uses UserDao to access the stored users
-    //Private - only userservice can directly use this field.
+    //Private - only UserService can directly use this field.
 
     private final UserDao userDao; //declares that user service needs a UserDao
     //the service will create its own dao object as we cant use dependency injection just yet

@@ -5,6 +5,7 @@ import com.johnscode.booking.CarBookingService;
 import com.johnscode.user.User;
 import com.johnscode.user.UserService;
 import com.johnscode.booking.CarBooking; //4
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
@@ -14,8 +15,10 @@ import java.sql.SQLOutput;
 import java.util.UUID;
 
 import java.math.BigDecimal;
+
 import com.johnscode.car.Car;
 import com.johnscode.booking.CarBookingService;
+
 import java.util.Scanner;
 
 // TODO 1. create a new branch called initial-implementation
@@ -43,16 +46,15 @@ public class Main {
         CarBookingService carBookingService = new CarBookingService();
 
 
-
         //Variable to control the menu loop
         //The application continues while running is true
 
         boolean running = true;
         while (running) {
             displayMenu(); //Display all menu options
-         int selectedOption = readMenuOption(scanner);
+            int selectedOption = readMenuOption(scanner);
 
-         //Decide action based on selectedOption
+            //Decide action based on selectedOption
             switch (selectedOption) {
                 case 1:
                     bookCar(
@@ -61,17 +63,17 @@ public class Main {
                             carBookingService
                     );
                     break;
-                    //System.out.println("Book a car will be selected next");
-                    //break;
+                //System.out.println("Book a car will be selected next");
+                //break;
                 case 2:
                     deleteBooking(
                             scanner,
                             carBookingService
                     );
                     break;
-                    //Delete an existing booking - last implementation after create booking, started with view implementations first
-                    //System.out.println("Delete bookings will be connected later");
-                    //break;
+                //Delete an existing booking - last implementation after create booking, started with view implementations first
+                //System.out.println("Delete bookings will be connected later");
+                //break;
                 case 3: //Ask for user and display all bookings belonging to that user
                     displayUserBookings(
                             scanner,
@@ -79,13 +81,13 @@ public class Main {
                             carBookingService
                     );
                     break;
-                    //System.out.println("View all user booked cars will be connected later");
-                   // break; third from last
-                    case 4:   //4th implementation
-                        displayAllBookings(carBookingService);
-                        break;
-                        //System.out.println("View all bookings will be connected later");
-                        //break;
+                //System.out.println("View all user booked cars will be connected later");
+                // break; third from last
+                case 4:   //4th implementation
+                    displayAllBookings(carBookingService);
+                    break;
+                //System.out.println("View all bookings will be connected later");
+                //break;
                 case 5:
                     displayAvailableCars(carBookingService); //Retrieve and display all currently available cars
                     break;
@@ -123,25 +125,27 @@ public class Main {
         System.out.println("8. Exit");
         System.out.println("===================================");
     }
-//Reads and validates the menu selection controlled by the switch statement above
+
+    //Reads and validates the menu selection controlled by the switch statement above
     //returns -1 when the entered text is not a number
-private static int readMenuOption(Scanner scanner) {
-    System.out.println("Select an option: ");
+    private static int readMenuOption(Scanner scanner) {
+        System.out.println("Select an option: ");
 
-    String input = scanner.nextLine().trim();
+        String input = scanner.nextLine().trim();
 
-    try {
-        //convert the text into an integer
-        return Integer.parseInt(input);
-    } catch (NumberFormatException exception) {
-        //runs when text entered cannot be converted into a whole number
-        System.out.println("Invalid input. Please enter a whole number");
-        return -1;
+        try {
+            //convert the text into an integer
+            return Integer.parseInt(input);
+        } catch (NumberFormatException exception) {
+            //runs when text entered cannot be converted into a whole number
+            System.out.println("Invalid input. Please enter a whole number");
+            return -1;
+        }
     }
-}
-        //Display all the users stored in the application
+
+    //Display all the users stored in the application
     private static void displayAllUsers(UserService userService) {
-        //Delegate userSevice to fetch all users
+        //Delegate userService to fetch all users
         User[] users = userService.getAllUsers();
         //Handle empty  user array
         if (users.length == 0) {
@@ -169,15 +173,16 @@ private static int readMenuOption(Scanner scanner) {
         //Request booking service to determine availability
         Car[] availableCars = carBookingService.getAvailableCars();
 
-        if(availableCars.length == 0) {
+        if (availableCars.length == 0) {
             System.out.println("There are currently no available cars");
-        return;
+            return;
         }
         System.out.println();
         System.out.println("AVAILABLE CARS");
         displayCars(availableCars); //Reuse the common car display method
     }
-    //Disaply cars that are both available abd electric
+
+    //Display cars that are both available abd electric
     private static void displayAvailableElectricCars(CarBookingService carBookingService) {
         Car[] electricCars = carBookingService.getAvailableElectricCars();
 
@@ -196,7 +201,7 @@ private static int readMenuOption(Scanner scanner) {
     private static void displayCars(Car[] cars) {
         System.out.println("---------------------------------");
 
-        for(int i = 0; i < cars.length; i++) {
+        for (int i = 0; i < cars.length; i++) {
             Car currentCar = cars[i];
 
             System.out.println("Car number: " + (i + 1));
@@ -228,7 +233,7 @@ private static int readMenuOption(Scanner scanner) {
 
         //Loop thorugh every booking in the array
         for (int i = 0; i < bookings.length; i++) {
-            //retrive the booking at the current position
+            //retrieve the booking at the current position
             CarBooking currentBooking = bookings[i];
 
             //Display the booking details
@@ -238,7 +243,7 @@ private static int readMenuOption(Scanner scanner) {
             System.out.println("User ID: " + currentBooking.getUser().getId());
             System.out.println("Car: " + currentBooking.getCar().getBrand());
             System.out.println("Car ID: " + currentBooking.getCar().getId());
-            System.out.println("Registration: " + currentBooking .getCar() .getRegNumber());
+            System.out.println("Registration: " + currentBooking.getCar().getRegNumber());
             System.out.println("Start date: " + currentBooking.getStartDate());
             System.out.println("End date: " + currentBooking.getEndDate());
             System.out.println("Total price: £" + currentBooking.getPrice());
@@ -248,6 +253,7 @@ private static int readMenuOption(Scanner scanner) {
         }
 
     }
+
     //Displays all bookings belonging to one selected user
     private static void displayUserBookings(
             Scanner scanner,
@@ -277,111 +283,113 @@ private static int readMenuOption(Scanner scanner) {
             System.out.println("Unable to retrieve bookings: " + e.getMessage());
         }
     }
-        //bookCar helper method - handles CLI process for creating a new car booking
-        private static void bookCar(Scanner scanner, UserService userService, CarBookingService carBookingService) {
-            //First show the users. Operator Needs a userID to create the booking
 
-            displayAllUsers(userService);
+    //bookCar helper method - handles CLI process for creating a new car booking
+    private static void bookCar(Scanner scanner, UserService userService, CarBookingService carBookingService) {
+        //First show the users. Operator Needs a userID to create the booking
+
+        displayAllUsers(userService);
+        System.out.println();
+
+        //Then show cars that are currently available
+        displayAvailableCars(carBookingService);
+        System.out.println();
+
+        try {
+            //Ask for the user ID
+            System.out.println("Enter user ID: ");
+            String userIdInput = scanner.nextLine().trim();
+
+            //convert the string into uuid object
+            UUID userId = UUID.fromString(userIdInput);
+
+            //Ask for the car ID
+            System.out.println("Enter the car ID: ");
+
+            String carIdInput = scanner.nextLine().trim();
+
+            UUID carID = UUID.fromString(carIdInput);
+
+            //Ask user for start date
+            System.out.println("Enter the start date: ");
+
+            String startDateInput = scanner.nextLine().trim();
+
+            LocalDate startDate = LocalDate.parse(startDateInput);
+
+            //Ask user for booking end date
+            System.out.println("Enter the end date: ");
+
+            String endDateInput = scanner.nextLine().trim();
+
+            LocalDate endDate = LocalDate.parse(endDateInput);
+
+            //Pass all the information to the carbooking service
+            CarBooking booking = carBookingService.bookCar(userId, carID, startDate, endDate);
+            //if successful the booking will be created
             System.out.println();
+            System.out.println("BOOKING SUCCESSFUL");
+            System.out.println("---------------------------------");
 
-            //Then show cars that are currently available
-            displayAvailableCars(carBookingService);
-            System.out.println();
+            System.out.println("Booking ID: " + booking.getId());
+            System.out.println("User: " + booking.getUser().getName());
+            System.out.println("Car: " + booking.getCar().getBrand());
+            System.out.println("Registration: " + booking.getCar().getRegNumber());
+            System.out.println("Start date: " + booking.getStartDate());
+            System.out.println("End date: " + booking.getEndDate());
+            System.out.println("Total price: £" + booking.getPrice());
+            System.out.println("Status: " + booking.getStatus());
+            System.out.println("----------------------------------------");
+        } catch (DateTimeParseException e) {
 
-            try {
-                //Ask for the user ID
-                System.out.println("Enter user ID: ");
-                String userIdInput = scanner.nextLine().trim();
-
-                //convert the string into uuid object
-                UUID userId = UUID.fromString(userIdInput);
-
-                //Ask for the car ID
-                System.out.println("Enter the car ID: ");
-
-                String carIdInput = scanner.nextLine().trim();
-
-                UUID carID = UUID.fromString(carIdInput);
-
-                //Ask user for start date
-                System.out.println("Enter the start date: ");
-
-                String startDateInput = scanner.nextLine().trim();
-
-                LocalDate startDate = LocalDate.parse(startDateInput);
-
-                //Ask user for booking end date
-                System.out.println("Enter the end date: ");
-
-                String endDateInput = scanner.nextLine().trim();
-
-                LocalDate endDate = LocalDate.parse(endDateInput);
-
-                //Pass all the information to the carbooking service
-                CarBooking booking = carBookingService.bookCar(userId, carID, startDate, endDate);
-                   //if successful the booking will be created
-                System.out.println();
-                System.out.println("BOOKING SUCCESSFUL");
-                System.out.println("---------------------------------");
-
-                System.out.println("Booking ID: " + booking.getId());
-                System.out.println("User: " + booking.getUser().getName());
-                System.out.println("Car: " + booking.getCar().getBrand());
-                System.out.println("Registration: " + booking.getCar().getRegNumber());
-                System.out.println("Start date: " + booking.getStartDate());
-                System.out.println("End date: " + booking.getEndDate());
-                System.out.println("Total price: £" + booking.getPrice());
-                System.out.println("Status: " + booking.getStatus());
-                System.out.println("----------------------------------------");
-            } catch (DateTimeParseException e) {
-
-                System.out.println("Unable to create booking: " + e.getMessage());
-                //main is responsible for asking the user for input, convert the input and displying the result
-                //CarBookingService remains responsible for - checking user exists, check car exists. check dates, availability, price, create booking and saving bookings
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to create booking; Enter correct details: " + e.getMessage());
-            }
-
+            System.out.println("Unable to create booking: " + e.getMessage());
+            //main is responsible for asking the user for input, convert the input and displying the result
+            //CarBookingService remains responsible for - checking user exists, check car exists. check dates, availability, price, create booking and saving bookings
+        } catch (IllegalArgumentException e) {
+            System.out.println("Unable to create booking; Enter correct details: " + e.getMessage());
         }
-        //deleteBooking helper
-        private static void deleteBooking(Scanner scanner, CarBookingService carBookingService) {
+
+    }
+
+    //deleteBooking helper
+    private static void deleteBooking(Scanner scanner, CarBookingService carBookingService) {
         //First retrieve all current bookings
-            CarBooking[] bookings = carBookingService.getAllBookings();
+        CarBooking[] bookings = carBookingService.getAllBookings();
 
-            if(bookings.length == 0) {
-                System.out.println("There are no bookings to delete.");
+        if (bookings.length == 0) {
+            System.out.println("There are no bookings to delete.");
             return;
+        }
+
+        //Display bookings first to allow operator to find ID for the search
+        System.out.println();
+        System.out.println("CURRENT BOOKINGS");
+        displayBookings(bookings);
+
+        //Ask for booking ID
+        System.out.println("Enter booking ID you want to delete: ");
+
+        String bookingIdInput = scanner.nextLine().trim();
+
+        try {
+            //Convert the entered sting into a UUID
+
+            UUID bookingId = UUID.fromString(bookingIdInput);
+
+            //Command the service layer to delete the booking
+            //True or False if booking not found
+
+            boolean deleted = carBookingService.deleteBooking(bookingId);
+
+            if (deleted) {
+                System.out.println("Booking deleted successfully.");
+            } else {
+                System.out.println("No booking was found with that ID.");
             }
-
-            //Display bookings first to allow operator to find ID for the search
-            System.out.println();
-            System.out.println("CURRENT BOOKINGS");
-            displayBookings(bookings);
-
-            //Ask for booking ID
-            System.out.println("Enter booking ID you want to delete: ");
-
-            String bookingIdInput = scanner.nextLine().trim();
-
-            try {
-                //Convert the entered sting into a UUID
-
-                UUID bookingId = UUID.fromString(bookingIdInput);
-
-                //Command the service layer to delete the booking
-                //True or False if booking not found
-
-                boolean deleted = carBookingService.deleteBooking(bookingId);
-
-                if(deleted) {
-                    System.out.println("Booking deleted successfully.");
-                } else {
-                    System.out.println("No booking was found with that ID.");
-                }
-            } catch (IllegalArgumentException e) {
-                System.out.println("Invalid booking ID. Please enter a valid UUID.");
-            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid booking ID. Please enter a valid UUID.");
         }
     }
-    //Program flow : Main() -> Creates scanner and services -> sets running = true -> enters the while loop -> displys the menu -> reads the selected option ->switch executes the matching case -> menue repeats.
-    //Used 2 helper method for user bookings as the first method retrieves the bookings and the second displays any booking array
+}
+//Program flow : Main() -> Creates scanner and services -> sets running = true -> enters the while loop -> displys the menu -> reads the selected option ->switch executes the matching case -> menue repeats.
+//Used 2 helper method for user bookings as the first method retrieves the bookings and the second displays any booking array

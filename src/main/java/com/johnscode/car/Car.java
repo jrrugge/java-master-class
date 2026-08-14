@@ -14,16 +14,17 @@ public class Car {
     private final Brand brand;
     private final boolean electric;
 
-//Constructor, called whenever a new car object is created. All five values must be provided when creating a car in order to create the object
-public Car (UUID id, String regNumber, BigDecimal rentalPricePerDay, Brand brand, boolean electric) {
-    //store supplied constructor value in the corresponding field
-    this.id = id;
-    this.regNumber = regNumber;
-    this.rentalPricePerDay = rentalPricePerDay;
-    this.brand = brand;
-    this.electric = electric;
-}
-//getter returns the cars unique ID
+    //Constructor, called whenever a new car object is created. All five values must be provided when creating a car in order to create the object
+    public Car(UUID id, String regNumber, BigDecimal rentalPricePerDay, Brand brand, boolean electric) {
+        //store supplied constructor value in the corresponding field
+        this.id = id;
+        this.regNumber = regNumber;
+        this.rentalPricePerDay = rentalPricePerDay;
+        this.brand = brand;
+        this.electric = electric;
+    }
+
+    //getter returns the cars details
     public UUID getId() {
         return id;
     }
@@ -33,16 +34,17 @@ public Car (UUID id, String regNumber, BigDecimal rentalPricePerDay, Brand brand
     }
 
     public BigDecimal getRentalPricePerDay() {
-    return rentalPricePerDay;
+        return rentalPricePerDay;
     }
 
     public Brand getBrand() {
         return brand;
     }
+
     //boolean getters begin with is instead of get
     public boolean isElectric() {
         return electric;
-        }
+    }
 
 }
 
