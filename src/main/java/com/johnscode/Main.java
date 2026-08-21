@@ -1,5 +1,13 @@
 package com.johnscode;
 
+import com.johnscode.car.CarDao;
+import com.johnscode.car.CarArrayDataAccessService;
+import com.johnscode.car.CarService;
+import com.johnscode.user.UserDao;
+import com.johnscode.user.UserArrayDataAccessService;
+import com.johnscode.booking.CarBookingArrayDataAccessService;
+import com.johnscode.booking.CarBookingFileDataAccessService;
+
 import com.johnscode.booking.CarBookingDao;
 import com.johnscode.booking.CarBookingService;
 import com.johnscode.user.User;
@@ -41,10 +49,20 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         //Note main comms with services not directly with DAO - refer to the architecture
 
-        UserService userService = new UserService();
+        // Phase 2 Part C - dependency injection. I build the DAOs here, pass them into services.
+        // Swapping the two lines below switches bookings between file storage and in-memory array.
+        CarBookingDao carBookingDao = new CarBookingFileDataAccessService("bookings.dat");
+        // CarBookingDao carBookingDao = new CarBookingArrayDataAccessService();
 
-        CarBookingService carBookingService = new CarBookingService();
+        CarDao carDao = new CarArrayDataAccessService();
+        CarService carService = new CarService(carDao);
 
+        UserDao userDao = new UserArrayDataAccessService();
+        UserService userService = new UserService(userDao);
+
+        CarBookingService carBookingService = new CarBookingService(
+                carBookingDao, carService, userService
+        );
 
         //Variable to control the menu loop
         //The application continues while running is true
@@ -57,37 +75,21 @@ public class Main {
             //Decide action based on selectedOption
             switch (selectedOption) {
                 case 1:
-                    bookCar(
-                            scanner,
-                            userService,
-                            carBookingService
-                    );
+                    bookCar(scanner, userService, carBookingService);
                     break;
-                //System.out.println("Book a car will be selected next");
-                //break;
+
                 case 2:
-                    deleteBooking(
-                            scanner,
-                            carBookingService
-                    );
+                    deleteBooking(scanner, carBookingService);
                     break;
                 //Delete an existing booking - last implementation after create booking, started with view implementations first
-                //System.out.println("Delete bookings will be connected later");
-                //break;
                 case 3: //Ask for user and display all bookings belonging to that user
-                    displayUserBookings(
-                            scanner,
-                            userService,
-                            carBookingService
-                    );
+                    displayUserBookings(scanner, userService, carBookingService);
                     break;
-                //System.out.println("View all user booked cars will be connected later");
-                // break; third from last
+                // break; third from last implementation
                 case 4:   //4th implementation
                     displayAllBookings(carBookingService);
                     break;
                 //System.out.println("View all bookings will be connected later");
-                //break;
                 case 5:
                     displayAvailableCars(carBookingService); //Retrieve and display all currently available cars
                     break;
@@ -255,11 +257,7 @@ public class Main {
     }
 
     //Displays all bookings belonging to one selected user
-    private static void displayUserBookings(
-            Scanner scanner,
-            UserService userService,
-            CarBookingService carBookingService
-    ) {
+    private static void displayUserBookings(Scanner scanner, UserService userService, CarBookingService carBookingService) {
         //Show all users first so the operator can copy the UUID of the required user
         displayAllUsers(userService);
         System.out.println("Enter user ID: ");

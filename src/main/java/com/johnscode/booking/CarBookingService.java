@@ -24,14 +24,13 @@ public class CarBookingService {
     private final CarBookingDao carBookingDao;
 
 
-    //Constructor used to create a new carBookingService object instance.
-
-    //This runs whenever we create a new CarBookingService:
-
-    public CarBookingService() {
-        this.userService = new UserService();
-        this.carService = new CarService();
-        this.carBookingDao = new CarBookingDao();
+    // Phase 2 Part C - Main wires all three dependencies in, nothing created with "new" in here anymore
+    public CarBookingService(CarBookingDao carBookingDao,
+                             CarService carService,
+                             UserService userService) {
+        this.carBookingDao = carBookingDao;
+        this.carService = carService;
+        this.userService = userService;
     }
 
 
@@ -77,7 +76,7 @@ public class CarBookingService {
 
         //UserService returns null when no matching user exists.
 
-        User user = userService.getUSerById(userId);
+        User user = userService.getUserById(userId);
 
         if (user == null) {
             throw new IllegalArgumentException(
@@ -90,7 +89,7 @@ public class CarBookingService {
 
         //CarServic returns null when no matching car exists.
 
-        Car car = carService.getCarById(carId);
+        Car car = carService.findCarById(carId);
 
         if (car == null) {
             throw new IllegalArgumentException(
@@ -185,7 +184,7 @@ public class CarBookingService {
     private boolean isCarBooked(UUID carId, LocalDate startDate, LocalDate endDate) {
         //Retrieve every booking currently stored.
 
-        CarBooking[] bookings = carBookingDao.getAllBookings();
+        CarBooking[] bookings = carBookingDao.getBookings();
 
         //Examine each booking in the array.
 
@@ -209,7 +208,7 @@ public class CarBookingService {
                     && startDate.isBefore(currentBooking.getEndDate());
             //The car is unavailable when it is the same car
             //AND
-            //he existing booking is active
+            //the existing booking is active
 
             if (sameCar && activeBooking && overlappingDates) {
                 return true;
@@ -221,18 +220,13 @@ public class CarBookingService {
         return false;
     }
 
-//Returns every booking currently stored.
-
+    // getAllBookings kept for Main - DAO method is getBookings() on the interface
     public CarBooking[] getAllBookings() {
-
-        /*
-         * Delegate the retrieval operation to CarBookingDao.
-         */
-        return carBookingDao.getAllBookings();
+        return carBookingDao.getBookings();
     }
 
-    //Exposing userBookings through CarBookingService
-//Returns all bookings belonging to one user
+    // Phase 2 Part A - getBookingsByUserId isn't on the CarBookingDao interface so I moved the
+    // filter loops here. DAO gives all bookings, service filters by user id.
     public CarBooking[] getBookingsByUserId(UUID userId) {
         //Validate that a user ID was supplied
         if (userId == null) {
@@ -240,13 +234,46 @@ public class CarBookingService {
         }
 
         //confirm that the selected user actually exists
-        User user = userService.getUSerById(userId);
+        User user = userService.getUserById(userId);
 
         if (user == null) {
             throw new IllegalArgumentException(("No user was found with ID: ") + userId);
         }
-        //Return only bookings belonging to this user
-        return carBookingDao.getBookingsByUserId(userId);
+
+        CarBooking[] allBookings = carBookingDao.getBookings();
+        // filter by user - same two-loop pattern I had in the old DAO class
+        int matchingBookingCount = 0;
+
+        for (int i = 0; i < allBookings.length; i++) {
+
+            CarBooking currentBooking = allBookings[i];
+
+            //Get the user stored inside the booking, then compare that users iD with userID
+            boolean sameUser = currentBooking.getUser().getId().equals(userId);
+
+            if (sameUser) {
+                matchingBookingCount++;
+            }
+        }
+
+        //Create an array large enough to hold all the matches. If no bookings match, this creates an empty array (new CarBooking)
+        CarBooking[] userBookings = new CarBooking[matchingBookingCount];
+
+        //this tracks the next available position in the new userBookings array
+        int userBookingIndex = 0;
+        //Loop through the bookings again and copy matching bookings into the new array.
+
+        for (int i = 0; i < allBookings.length; i++) {
+            CarBooking currentBooking = allBookings[i];
+            boolean sameUser = currentBooking.getUser().getId().equals(userId);
+
+            if (sameUser) {
+                userBookings[userBookingIndex] = currentBooking;
+                userBookingIndex++;
+            }
+        }
+        //Return only the bookings belonging to this user
+        return userBookings;
     }
 
     //Add getAvailableCars Method
@@ -284,7 +311,7 @@ public class CarBookingService {
         return availableCars;
     }
 
-    //Add a method that return availabe electric cars
+    //Add a method that return available electric cars
     public Car[] getAvailableElectricCars() {
         //reuse get available cars
 
@@ -318,7 +345,8 @@ public class CarBookingService {
     }
 
 
-    //deletes a booking
+    // Phase 2 Part A - deleteBooking on the DAO is void now, so service checks if booking
+    // exists first and returns true/false for Main (same behaviour as before for the menu)
     public boolean deleteBooking(UUID bookingId) {
 
         //Validate that a booking ID was supplied.
@@ -327,11 +355,11 @@ public class CarBookingService {
             throw new IllegalArgumentException("Booking ID cannot be null");
         }
 
-        //Delegate the deletion operation to CarBookingDao.
-
-        return carBookingDao.deleteBookingById(bookingId);
+        CarBooking booking = carBookingDao.findBookingById(bookingId);
+        if (booking == null) {
+            return false;
+        }
+        carBookingDao.deleteBooking(bookingId);
+        return true;
     }
-
-//after adding helped methods for option 4 then update CarBookingDao
-//returns every booking currently stored
 }
