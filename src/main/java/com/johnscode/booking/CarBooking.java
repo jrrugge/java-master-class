@@ -8,11 +8,15 @@ import java.util.Objects;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.io.Serializable;
+
 //imports allos CarBooking to use the classes located in other packages
 //represents booking in the cr in the car booking system
 
 //Setting the CarBooking class and the fields
-public class CarBooking {
+public class CarBooking implements Serializable {
+    // Phase 2 Part B - this is the object we actually write to bookings.dat
+    private static final long serialVersionUID = 1L;
     private final UUID id;
     private final User user; //The user who made the booking
     private final Car car; // The car being booked
@@ -40,7 +44,7 @@ public class CarBooking {
     }
 
     //Getters, returns value of each attribute provided
-//Each getters return type matches its field
+    //Each getters return type matches its field
     public UUID getId() {
         return id;
     }

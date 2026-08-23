@@ -16,31 +16,32 @@ public class CarService {
     //CarService needs a CarDao
     private final CarDao carDao;
 
-    //Constructor to create new CarDao used by this service.
-    public CarService() {
-        this.carDao = new CarDao();
+    // Phase 2 Part C - no more "new CarArrayDataAccessService()" in here.
+    // Main creates the DAO and passes it in through this constructor.
+    public CarService(CarDao carDao) {
+        this.carDao = carDao;
     }
 
-    //returns all cars stored in CarDao
-    //The service delegates retrieval to CarDao
+    // Service method names stayed the same from phase 1 (getAllCars).
+    // Only the DAO calls changed to match the interface (getCars, findCarById).
     public Car[] getAllCars() {
-        return carDao.getAllCars();
+        return carDao.getCars();
     }
 
 //Find a car using its unique ID
 
-    public Car getCarById(UUID carId) {
+    public Car findCarById(UUID carId) {
         if (carId == null) {
             throw new IllegalArgumentException("Car ID cannot be null");
         }
-        return carDao.getCarById(carId);
+        return carDao.findCarById(carId);
     }
 
     //Returns a new array containing only electric cars
     //loops to count how many electric cars exist
     //and create an array of that exact size and fill it
     public Car[] getElectricCars() {
-        Car[] allCars = carDao.getAllCars();
+        Car[] allCars = carDao.getCars();
         int electricCarCount = 0; //variable to hold count of electric cars
 
         //first loop - count how many cars are electric
