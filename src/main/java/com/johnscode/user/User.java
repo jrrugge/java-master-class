@@ -2,45 +2,19 @@ package com.johnscode.user;
 
 //java class/util used to create unique id's.
 
-import java.util.Objects;
-import java.util.UUID;
 import java.io.Serializable;
+import java.util.UUID;
 
 //This class represents a user in the car booking system
 
-public class User implements Serializable {
+/**
+ * @param id defines the information every user contains, two people can have the same name but not the same UUID
+ */
+public record User(UUID id, String name) implements Serializable {
 
     private static final long serialVersionUID = 1L; // part B - User sits inside CarBooking when we save to file
-    //defines the information every user contains, two people can have the same name but not the same UUID
-    private final UUID id;
-    private final String name;
-
     //Constructor - called whenever we create a new user object
     //Values provided are then copied into the user objects field
-    public User(UUID id, String name) {
-        this.id = id;  //means store the supplied id inside the User objects id field.
-        this.name = name;
-    }
+    //means store the supplied id inside the User objects id field.
 
-    //getter returning the users unique id
-    public UUID getId() {
-        return id;
-    }
-
-    //getter returning te user name provided
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
 }

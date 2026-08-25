@@ -3,12 +3,12 @@ package com.johnscode.booking;
 import com.johnscode.car.Car;
 import com.johnscode.user.User;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
-import java.io.Serializable;
 
 //imports allos CarBooking to use the classes located in other packages
 //represents booking in the cr in the car booking system
