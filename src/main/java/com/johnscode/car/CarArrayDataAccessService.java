@@ -33,7 +33,7 @@ public class CarArrayDataAccessService implements CarDao {
                 ),
                 new Car(
                         UUID.fromString("c88d662e-a50f-47e5-9a9b-a86c48d14bf3"),
-                        "MN56 OPQ",
+                        "AU90 XYZ",
                         new BigDecimal("100.00"),
                         Brand.AUDI,
                         false
@@ -48,9 +48,8 @@ public class CarArrayDataAccessService implements CarDao {
 
     @Override
     public Car findCarById(UUID carId) {
-        for (int i = 0; i < cars.size(); i++) {
-            Car currentCar = cars.get(i);
-            if (currentCar.id().equals(carId)) {
+        for (Car currentCar : cars) {
+            if (currentCar.getId().equals(carId)) {
                 return currentCar;
             }
         }

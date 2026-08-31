@@ -45,8 +45,7 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
     public CarBooking findBookingById(UUID bookingId) {
         List<CarBooking> bookings = readBookingsFromFile();
 
-        for (int i = 0; i < bookings.size(); i++) {
-            CarBooking currentBooking = bookings.get(i);
+        for (CarBooking currentBooking : bookings) {
             if (currentBooking.getId().equals(bookingId)) {
                 return currentBooking;
             }

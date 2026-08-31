@@ -27,9 +27,8 @@ public class CarService {
         List<Car> allCars = carDao.getCars();
         List<Car> electricCars = new ArrayList<>();
 
-        for (int i = 0; i < allCars.size(); i++) {
-            Car currentCar = allCars.get(i);
-            if (currentCar.electric()) {
+        for (Car currentCar : allCars) {
+            if (currentCar.isElectric()) {
                 electricCars.add(currentCar);
             }
         }

@@ -119,8 +119,8 @@ public class Main {
         for (int i = 0; i < users.size(); i++) {
             User currentUser = users.get(i);
             System.out.println("User number: " + (i + 1));
-            System.out.println("ID: " + currentUser.id());
-            System.out.println("Name: " + currentUser.name());
+            System.out.println("ID: " + currentUser.getId());
+            System.out.println("Name: " + currentUser.getName());
             System.out.println("--------------------------------");
         }
     }
@@ -158,11 +158,11 @@ public class Main {
             Car currentCar = cars.get(i);
 
             System.out.println("Car number: " + (i + 1));
-            System.out.println("ID: " + currentCar.id());
-            System.out.println("Brand: " + currentCar.brand());
-            System.out.println("Registration: " + currentCar.regNumber());
-            System.out.println("Daily Price: " + currentCar.rentalPricePerDay());
-            System.out.println("Electric: " + currentCar.electric());
+            System.out.println("ID: " + currentCar.getId());
+            System.out.println("Brand: " + currentCar.getBrand());
+            System.out.println("Registration: " + currentCar.getRegNumber());
+            System.out.println("Daily Price: " + currentCar.getRentalPricePerDay());
+            System.out.println("Electric: " + currentCar.isElectric());
             System.out.println("--------------------------------------------------");
         }
     }
@@ -188,11 +188,11 @@ public class Main {
 
             System.out.println("Booking number: " + (i + 1));
             System.out.println("Booking ID: " + currentBooking.getId());
-            System.out.println("User: " + currentBooking.getUser().name());
-            System.out.println("User ID: " + currentBooking.getUser().id());
-            System.out.println("Car: " + currentBooking.getCar().brand());
-            System.out.println("Car ID: " + currentBooking.getCar().id());
-            System.out.println("Registration: " + currentBooking.getCar().regNumber());
+            System.out.println("User: " + currentBooking.getUser().getName());
+            System.out.println("User ID: " + currentBooking.getUser().getId());
+            System.out.println("Car: " + currentBooking.getCar().getBrand());
+            System.out.println("Car ID: " + currentBooking.getCar().getId());
+            System.out.println("Registration: " + currentBooking.getCar().getRegNumber());
             System.out.println("Start date: " + currentBooking.getStartDate());
             System.out.println("End date: " + currentBooking.getEndDate());
             System.out.println("Total price: £" + currentBooking.getPrice());
@@ -258,9 +258,9 @@ public class Main {
             System.out.println("BOOKING SUCCESSFUL");
             System.out.println("---------------------------------");
             System.out.println("Booking ID: " + booking.getId());
-            System.out.println("User: " + booking.getUser().name());
-            System.out.println("Car: " + booking.getCar().brand());
-            System.out.println("Registration: " + booking.getCar().regNumber());
+            System.out.println("User: " + booking.getUser().getName());
+            System.out.println("Car: " + booking.getCar().getBrand());
+            System.out.println("Registration: " + booking.getCar().getRegNumber());
             System.out.println("Start date: " + booking.getStartDate());
             System.out.println("End date: " + booking.getEndDate());
             System.out.println("Total price: £" + booking.getPrice());

@@ -65,7 +65,7 @@ public class CarBookingService {
         }
 
         long numberOfDays = ChronoUnit.DAYS.between(startDate, endDate);
-        BigDecimal totalPrice = car.rentalPricePerDay().multiply(BigDecimal.valueOf(numberOfDays));
+        BigDecimal totalPrice = car.getRentalPricePerDay().multiply(BigDecimal.valueOf(numberOfDays));
 
         CarBooking newBooking = new CarBooking(
                 UUID.randomUUID(),
@@ -85,10 +85,8 @@ public class CarBookingService {
     private boolean isCarBooked(UUID carId, LocalDate startDate, LocalDate endDate) {
         List<CarBooking> bookings = carBookingDao.getBookings();
 
-        for (int i = 0; i < bookings.size(); i++) {
-            CarBooking currentBooking = bookings.get(i);
-
-            boolean sameCar = currentBooking.getCar().id().equals(carId);
+        for (CarBooking currentBooking : bookings) {
+            boolean sameCar = currentBooking.getCar().getId().equals(carId);
             boolean activeBooking = currentBooking.getStatus() == BookingStatus.ACTIVE;
             boolean overlappingDates = currentBooking.getStartDate().isBefore(endDate)
                     && startDate.isBefore(currentBooking.getEndDate());
@@ -118,9 +116,8 @@ public class CarBookingService {
         List<CarBooking> allBookings = carBookingDao.getBookings();
         List<CarBooking> userBookings = new ArrayList<>();
 
-        for (int i = 0; i < allBookings.size(); i++) {
-            CarBooking currentBooking = allBookings.get(i);
-            if (currentBooking.getUser().id().equals(userId)) {
+        for (CarBooking currentBooking : allBookings) {
+            if (currentBooking.getUser().getId().equals(userId)) {
                 userBookings.add(currentBooking);
             }
         }
@@ -134,9 +131,8 @@ public class CarBookingService {
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(1);
 
-        for (int i = 0; i < allCars.size(); i++) {
-            Car currentCar = allCars.get(i);
-            if (!isCarBooked(currentCar.id(), today, tomorrow)) {
+        for (Car currentCar : allCars) {
+            if (!isCarBooked(currentCar.getId(), today, tomorrow)) {
                 availableCars.add(currentCar);
             }
         }
@@ -148,9 +144,8 @@ public class CarBookingService {
         List<Car> availableCars = getAvailableCars();
         List<Car> availableElectricCars = new ArrayList<>();
 
-        for (int i = 0; i < availableCars.size(); i++) {
-            Car currentCar = availableCars.get(i);
-            if (currentCar.electric()) {
+        for (Car currentCar : availableCars) {
+            if (currentCar.isElectric()) {
                 availableElectricCars.add(currentCar);
             }
         }

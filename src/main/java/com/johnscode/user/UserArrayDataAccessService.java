@@ -22,9 +22,8 @@ public class UserArrayDataAccessService implements UserDao {
 
     @Override
     public User findUserById(UUID userId) {
-        for (int i = 0; i < users.size(); i++) {
-            User currentUser = users.get(i);
-            if (currentUser.id().equals(userId)) {
+        for (User currentUser : users) {
+            if (currentUser.getId().equals(userId)) {
                 return currentUser;
             }
         }
