@@ -1,34 +1,20 @@
 package com.johnscode.car;
 
-import com.johnscode.car.CarDao;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-
-import com.johnscode.car.Car;
-
-//return all cars
-//find a car by uuid
-//return only electric cars
-//validate input before calling carDao
 
 public class CarService {
 
-    //CarService needs a CarDao
     private final CarDao carDao;
 
-    // Phase 2 Part C - no more "new CarArrayDataAccessService()" in here.
-    // Main creates the DAO and passes it in through this constructor.
     public CarService(CarDao carDao) {
         this.carDao = carDao;
     }
 
-    // Service method names stayed the same from phase 1 (getAllCars).
-    // Only the DAO calls changed to match the interface (getCars, findCarById).
-    public Car[] getAllCars() {
+    public List<Car> getAllCars() {
         return carDao.getCars();
     }
-
-//Find a car using its unique ID
 
     public Car findCarById(UUID carId) {
         if (carId == null) {
@@ -37,36 +23,16 @@ public class CarService {
         return carDao.findCarById(carId);
     }
 
-    //Returns a new array containing only electric cars
-    //loops to count how many electric cars exist
-    //and create an array of that exact size and fill it
-    public Car[] getElectricCars() {
-        Car[] allCars = carDao.getCars();
-        int electricCarCount = 0; //variable to hold count of electric cars
+    public List<Car> getElectricCars() {
+        List<Car> allCars = carDao.getCars();
+        List<Car> electricCars = new ArrayList<>();
 
-        //first loop - count how many cars are electric
-        for (int i = 0; i < allCars.length; i++) {
-            Car currentCar = allCars[i];
-
+        for (Car currentCar : allCars) {
             if (currentCar.isElectric()) {
-                electricCarCount++;
+                electricCars.add(currentCar);
             }
         }
 
-        //Array to hold the number of electric cars found
-        Car[] electricCars = new Car[electricCarCount];
-        int electricCarIndex = 0;  //position of insert in the array of electric cars found in order
-
-        //second loop. Find each electric car and add it to te new array
-        for (int i = 0; i < allCars.length; i++) {
-            Car currentCar = allCars[i];
-
-            if (currentCar.isElectric()) {
-                electricCars[electricCarIndex] = currentCar; //store the current electric car in te next available position
-                electricCarIndex++; //Move to the next position for the next match
-            }
-        }
         return electricCars;
     }
-
 }
