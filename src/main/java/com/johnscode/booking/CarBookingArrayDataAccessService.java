@@ -15,12 +15,10 @@ public class CarBookingArrayDataAccessService implements CarBookingDao {
 
     @Override
     public CarBooking findBookingById(UUID bookingId) {
-        for (CarBooking currentBooking : bookings) {
-            if (currentBooking.getId().equals(bookingId)) {
-                return currentBooking;
-            }
-        }
-        return null;
+        return bookings.stream()
+                .filter(booking -> booking.getId().equals(bookingId))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
