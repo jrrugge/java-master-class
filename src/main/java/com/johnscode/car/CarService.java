@@ -1,8 +1,8 @@
 package com.johnscode.car;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CarService {
 
@@ -23,16 +23,10 @@ public class CarService {
         return carDao.findCarById(carId);
     }
 
+    // Phase 4 - filter with stream instead of loop
     public List<Car> getElectricCars() {
-        List<Car> allCars = carDao.getCars();
-        List<Car> electricCars = new ArrayList<>();
-
-        for (Car currentCar : allCars) {
-            if (currentCar.isElectric()) {
-                electricCars.add(currentCar);
-            }
-        }
-
-        return electricCars;
+        return carDao.getCars().stream()
+                .filter(Car::isElectric)
+                .collect(Collectors.toList());
     }
 }

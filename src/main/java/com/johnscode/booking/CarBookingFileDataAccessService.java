@@ -1,6 +1,11 @@
 package com.johnscode.booking;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,15 +48,10 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
 
     @Override
     public CarBooking findBookingById(UUID bookingId) {
-        List<CarBooking> bookings = readBookingsFromFile();
-
-        for (CarBooking currentBooking : bookings) {
-            if (currentBooking.getId().equals(bookingId)) {
-                return currentBooking;
-            }
-        }
-
-        return null;
+        return readBookingsFromFile().stream()
+                .filter(booking -> booking.getId().equals(bookingId))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
