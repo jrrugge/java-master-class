@@ -1,5 +1,10 @@
 package com.johnscode.user;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,11 +13,26 @@ public class UserArrayDataAccessService implements UserDao {
     private static final List<User> users;
 
     static {
-        users = List.of(
-                new User(UUID.fromString("8ca51d2b-aaaf-4bf2-834a-e02964e10fc3"), "James"),
-                new User(UUID.fromString("b10d126a-3608-4980-9f9c-aa179f5cebc3"), "John"),
-                new User(UUID.fromString("7e8b2f7c-dcb4-4b18-8d74-f0766363a11c"), "Alex")
+        users = loadUsers();
+    }
+
+    private static List<User> loadUsers() {
+        List<User> loadedUsers = new ArrayList<>();
+        File file = new File(
+                UserArrayDataAccessService.class.getClassLoader().getResource("users.csv").getPath()
         );
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                loadedUsers.add(new User(UUID.fromString(parts[0]), parts[1]));
+            }
+        } catch (IOException exception) {
+            throw new IllegalStateException("Failed to load users from users.csv", exception);
+        }
+
+        return List.copyOf(loadedUsers);
     }
 
     @Override
