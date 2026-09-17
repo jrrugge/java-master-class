@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
+import com.johnscode.car.CarFakerDataAccessService;
+import com.johnscode.user.UserFakerDataAccessService;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -28,9 +31,11 @@ public class Main {
         // CarBookingDao carBookingDao = new CarBookingArrayDataAccessService();
 
         CarDao carDao = new CarArrayDataAccessService();
+        //CarDao carDao = new CarFakerDataAccessService();
         CarService carService = new CarService(carDao);
 
         UserDao userDao = new UserArrayDataAccessService();
+        //UserDao userDao = new UserFakerDataAccessService();
         UserService userService = new UserService(userDao);
 
         CarBookingService carBookingService = new CarBookingService(
