@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -61,7 +62,29 @@ class CarBookingServiceTest {
         List<CarBooking> result = underTest.getAllBookings();
 
         assertEquals(1, result.size());
+        assertEquals(booking, result.get(0));     // first item is the booking we set up, confirms content match
         verify(carBookingDao).getBookings();
+    }
+
+    @Test
+    void itShouldThrowWhenCarIsAlreadyBooked() {
+        LocalDate startDate = LocalDate.now().plusDays(2);
+        LocalDate endDate = LocalDate.now().plusDays(5);
+
+        CarBooking existingBooking = new CarBooking(
+                UUID.randomUUID(), user, car,
+                LocalDate.now().plusDays(1), LocalDate.now().plusDays(4),
+                new BigDecimal("150.00"), BookingStatus.ACTIVE, LocalDateTime.now()
+        );
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(carService.findCarById(carId)).thenReturn(car);
+        when(carBookingDao.getBookings()).thenReturn(List.of(existingBooking));
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> underTest.bookCar(userId, carId, startDate, endDate)
+        );
+        assertEquals("The car is already booked and is not available", exception.getMessage());
+        verify(carBookingDao, never()).saveBooking(any());
     }
 
     @Test
